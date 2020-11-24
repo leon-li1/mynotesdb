@@ -1,4 +1,4 @@
-const notes = require("routes/notes");
+const notes = require("./routes/notes");
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();

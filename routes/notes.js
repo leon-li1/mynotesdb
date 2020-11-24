@@ -2,12 +2,12 @@ const { Note, validate } = require("../models/note");
 const express = require("express");
 const router = express.Router();
 
-router.get("/notes/all", async (req, res) => {
+router.get("/all", async (req, res) => {
   const notes = await Note.find().sort({ title: 1 });
   res.send(notes);
 });
 
-router.post("/notes/add", async (req, res) => {
+router.post("/add", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const newNote = new Note({
@@ -20,7 +20,7 @@ router.post("/notes/add", async (req, res) => {
   res.send(newNote);
 });
 
-router.put("/notes/update/:id", async (req, res) => {
+router.put("/update/:id", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   const updatedNote = await Note.findByIdAndUpdate(
@@ -40,7 +40,7 @@ router.put("/notes/update/:id", async (req, res) => {
   res.send(updatedNote);
 });
 
-router.delete("/notes/delete/:id", async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const deletedNote = await Note.findByIdAndRemove(req.params.id);
 
   if (!deletedNote)
