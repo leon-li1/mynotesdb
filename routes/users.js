@@ -2,6 +2,7 @@ const { User, validate } = require("../models/user");
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
+const bcrypt = require("bcrypt");
 
 router.get("/all", async (req, res) => {
   const users = await User.find().sort({ name: 1 });
@@ -16,6 +17,8 @@ router.post("/add", async (req, res) => {
   if (user) return res.status(400).send("User already registered");
 
   const newUser = new User(_.pick(req.body, ["name", "email", "password"]));
+  const salt = await bcrypt.genSalt(10);
+  newUser.password = await bcrypt.hash(newUser.password, salt);
 
   newUser.save();
   res.send(_.pick(newUser, ["name", "email", "id"]));
