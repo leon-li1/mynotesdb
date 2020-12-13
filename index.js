@@ -1,4 +1,5 @@
 const notes = require("./routes/notes");
+const users = require("./routes/users");
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
@@ -14,6 +15,7 @@ mongoose
 
 app.use(express.json());
 app.use("/notes", notes);
+app.use("/api/users", users);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

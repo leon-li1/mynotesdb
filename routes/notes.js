@@ -1,6 +1,7 @@
 const { Note, validate } = require("../models/note");
 const express = require("express");
 const router = express.Router();
+const _ = require("lodash");
 
 router.get("/all", async (req, res) => {
   const notes = await Note.find().sort({ title: 1 });
@@ -10,12 +11,9 @@ router.get("/all", async (req, res) => {
 router.post("/add", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  const newNote = new Note({
-    title: req.body.title,
-    body: req.body.body,
-    isDone: req.body.isDone,
-    ageofUser: req.body.ageofUser,
-  });
+  const newNote = new Note(
+    _.pick(req.body, ["title", "body", "isDone", "ageofUser"])
+  );
   newNote.save();
   res.send(newNote);
 });
@@ -25,12 +23,7 @@ router.put("/update/:id", async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
   const updatedNote = await Note.findByIdAndUpdate(
     req.params.id,
-    {
-      title: req.body.title,
-      body: req.body.body,
-      isDone: req.body.isDone,
-      ageofUser: req.body.ageofUser,
-    },
+    _.pick(req.body, ["title", "body", "isDone", "ageofUser"]),
     { new: true }
   );
 
