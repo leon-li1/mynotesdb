@@ -1,3 +1,4 @@
+const auth = require("../middleware/auth");
 const { Note, validate } = require("../models/note");
 const express = require("express");
 const router = express.Router();
@@ -8,9 +9,10 @@ router.get("/all", async (req, res) => {
   res.send(notes);
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
+
   const newNote = new Note(
     _.pick(req.body, ["title", "body", "isDone", "ageofUser"])
   );
