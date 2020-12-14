@@ -5,6 +5,7 @@ const config = require("config");
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
+require("./startup/prod")(app);
 
 if (!config.get("jwtPrivateKey")) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined");
