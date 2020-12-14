@@ -13,7 +13,7 @@ if (!config.get("jwtPrivateKey")) {
 }
 
 mongoose
-  .connect("mongodb://localhost/mynotesdb", {
+  .connect(process.env.MONGO_URL || "mongodb://localhost/mynotesdb", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
