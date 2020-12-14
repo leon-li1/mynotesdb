@@ -1,4 +1,6 @@
+const admin = require("../middleware/admin");
 const auth = require("../middleware/auth");
+const validateUser = require("../middleware/validUser");
 const { Note, validate } = require("../models/note");
 const express = require("express");
 const router = express.Router();
@@ -9,7 +11,7 @@ router.get("/all", async (req, res) => {
   res.send(notes);
 });
 
-router.post("/add", auth, async (req, res) => {
+router.post("/add", [auth, validateUser], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -35,7 +37,7 @@ router.put("/update/:id", async (req, res) => {
   res.send(updatedNote);
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id", [auth, admin], async (req, res) => {
   const deletedNote = await Note.findByIdAndRemove(req.params.id);
 
   if (!deletedNote)
