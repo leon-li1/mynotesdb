@@ -70,3 +70,5 @@
 {"level":"info","message":"Connected to mongodb+srv://leonli:1582@notesdb.efalk.mongodb.net/notes?retryWrites=true&w=majority","timestamp":"2020-12-17T21:55:24.470Z"}
 {"level":"info","message":"Listening on port 3000...","timestamp":"2020-12-17T22:31:21.240Z"}
 {"level":"info","message":"Connected to mongodb+srv://leonli:1582@notesdb.efalk.mongodb.net/notes?retryWrites=true&w=majority","timestamp":"2020-12-17T22:31:21.842Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2020-12-17T22:37:49.165Z"}
+{"level":"info","message":"Connected to mongodb+srv://leonli:1582@notesdb.efalk.mongodb.net/notes_test?retryWrites=true&w=majority","timestamp":"2020-12-17T22:37:49.756Z"}
