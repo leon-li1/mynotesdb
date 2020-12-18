@@ -2,10 +2,13 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const noteSchema = new mongoose.Schema({
-  title: String,
+  title: {
+    type: String,
+    minlength: 4,
+    maxlength: 100,
+  },
   body: {
     type: String,
-    required: true,
   },
   date: {
     type: Date,
@@ -14,7 +17,6 @@ const noteSchema = new mongoose.Schema({
   isDone: Boolean,
   ageofUser: {
     type: Number,
-    required: true,
     min: 8,
     max: 99,
   },
@@ -24,10 +26,10 @@ const Note = mongoose.model("Note", noteSchema);
 
 const validateSchema = (note) => {
   const schema = {
-    title: Joi.string(),
-    body: Joi.string().required(),
+    title: Joi.string().min(4).max(100).required(),
+    body: Joi.string(),
     isDone: Joi.boolean(),
-    ageofUser: Joi.number().min(8).max(99).required(),
+    ageofUser: Joi.number().min(8).max(99),
   };
   return Joi.validate(note, schema);
 };
