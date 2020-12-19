@@ -1,6 +1,6 @@
 const request = require("supertest");
-const { User } = require("../../models/user");
-const { Note } = require("../../models/note");
+const { User } = require("../../../models/user");
+const { Note } = require("../../../models/note");
 
 let server;
 
@@ -16,7 +16,7 @@ describe("auth middleware", () => {
   };
 
   beforeEach(async () => {
-    server = require("../../index");
+    server = require("../../../index");
     user = await new User({
       name: "test123",
       email: "test@gmail.com",

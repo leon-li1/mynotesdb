@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 5,
     maxlength: 255,
-    //   unique: true,
+    // unique: true,
   },
   password: {
     type: String,
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 1024,
   },
-  isAdmin: Boolean,
+  isAdmin: { type: Boolean, default: false },
 });
 
 userSchema.methods.generateAuthToken = function () {
@@ -37,7 +37,7 @@ const User = mongoose.model("User", userSchema);
 const validateUser = (user) => {
   const schema = {
     name: Joi.string().min(5).max(50).required(),
-    email: Joi.string().min(5).max(255).required().email(),
+    email: Joi.string().min(5).max(255).required().email(), //TODO: add uniqueness
     password: Joi.string().min(5).max(255).required(), // this is the actual password so it's max is 255
     isAdmin: Joi.boolean(),
   };

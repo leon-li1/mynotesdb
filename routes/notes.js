@@ -32,7 +32,7 @@ router.post("/add", [auth, validateUser], async (req, res) => {
   res.send(newNote);
 });
 
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id", [auth, validateUser, admin], async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -48,7 +48,7 @@ router.put("/update/:id", async (req, res) => {
   res.send(updatedNote);
 });
 
-router.delete("/delete/:id", [auth, admin], async (req, res) => {
+router.delete("/delete/:id", [auth, validateUser, admin], async (req, res) => {
   const deletedNote = await Note.findByIdAndRemove(req.params.id);
 
   if (!deletedNote)

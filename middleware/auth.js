@@ -9,6 +9,6 @@ module.exports = (req, res, next) => {
     req.user = decodedPayload;
     next();
   } catch (ex) {
-    res.status(400).send("Access denied. Invalid token.");
+    res.status(400).send("Invalid token.");
   }
 };
