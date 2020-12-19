@@ -1,12 +1,14 @@
 const request = require("supertest");
 const { User } = require("../../../models/user");
 const { Note } = require("../../../models/note");
+const bcrypt = require("bcrypt");
 
 let server;
 
 describe("auth middleware", () => {
   let token;
   let user;
+  let salt;
 
   const exec = () => {
     return request(server)
@@ -17,16 +19,20 @@ describe("auth middleware", () => {
 
   beforeEach(async () => {
     server = require("../../../index");
-    user = await new User({
+    salt = await bcrypt.genSalt(10);
+    tempUser = {
       name: "test123",
       email: "test@gmail.com",
-      password: 12345,
-    }).save();
+      password: await bcrypt.hash("12345", salt),
+      isAdmin: true,
+    };
+    user = await new User(tempUser).save();
     token = user.generateAuthToken();
   });
 
   afterEach(async () => {
     await Note.deleteMany({});
+    await User.deleteMany({});
     await server.close();
   });
 

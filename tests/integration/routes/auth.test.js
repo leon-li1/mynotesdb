@@ -1,7 +1,6 @@
 const request = require("supertest");
 const { User } = require("../../../models/user");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 let server;
@@ -24,19 +23,6 @@ describe("/api/auth", () => {
       return request(server).post("/api/auth").send(user);
     };
 
-    beforeEach(async () => {
-      tempUser = new User({
-        name: "test123",
-        email: "test@gmail.com",
-        password: "12345",
-        isAdmin: true,
-      });
-      const salt = await bcrypt.genSalt(10);
-      tempUser.password = await bcrypt.hash(tempUser.password, salt);
-      await tempUser.save();
-      user = { email: "test@gmail.com", password: "12345" };
-    });
-
     it("should return 400 if body is invalid", async () => {
       user = {};
       const res = await exec();
@@ -56,24 +42,35 @@ describe("/api/auth", () => {
     });
 
     it("should return 200 given valid user", async () => {
+      const salt = await bcrypt.genSalt(10);
+      tempUser = await new User({
+        name: "test123",
+        email: "test@gmail.com",
+        password: await bcrypt.hash("12345", salt),
+        isAdmin: true,
+      }).save();
+      user = { email: "test@gmail.com", password: "12345" };
+
       const res = await exec();
       expect(res.status).toBe(200);
     });
 
-    it("should return 200 given valid user", async () => {
+    it("should return a valid jwt given valid user", async () => {
+      const salt = await bcrypt.genSalt(10);
+      tempUser = await new User({
+        name: "test123",
+        email: "test@gmail.com",
+        password: await bcrypt.hash("12345", salt),
+        isAdmin: true,
+      }).save();
+      user = { email: "test@gmail.com", password: "12345" };
+
       const res = await exec();
       expect(res.status).toBe(200);
-      console.log(res.body); //TODO
+      expect(res.body.token).toBeTokenContaining({
+        _id: tempUser._id.toHexString(),
+        isAdmin: true,
+      });
     });
-
-    // it("should return a valid jwt given valid user", async () => {
-    //   const res = await exec();
-    //   // console.log(res.body);
-    //   const payload = jwt.verify(
-    //     res.body.toString(),
-    //     process.env.JWT_PRIVATE_KEY
-    //   );
-    //   expect(payload).toBeTruthy();
-    // });
   });
 });
