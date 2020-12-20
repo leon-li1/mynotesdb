@@ -1,13 +1,38 @@
 const request = require("supertest");
 const { Note } = require("../../../models/note");
 const { User } = require("../../../models/user");
+const bcrypt = require("bcrypt");
 const _ = require("lodash");
 
 let server;
 
 describe("/notes", () => {
-  beforeEach(() => {
+  const testNote = {
+    title: "test",
+    body: "test",
+    isDone: false,
+    ageofUser: 8,
+  };
+  const testNote2 = {
+    title: "test2",
+    body: "test2",
+    isDone: true,
+    ageofUser: 98,
+  };
+  let salt;
+  let user;
+  let token;
+
+  beforeEach(async () => {
     server = require("../../../index");
+    salt = await bcrypt.genSalt(10);
+    user = await new User({
+      name: "test123",
+      email: "test@gmail.com",
+      password: await bcrypt.hash("12345", salt),
+      isAdmin: true,
+    }).save();
+    token = user.generateAuthToken();
   });
 
   afterEach(async () => {
@@ -18,21 +43,7 @@ describe("/notes", () => {
 
   describe("GET /all", () => {
     it("should return all notes in db", async () => {
-      await Note.collection.insertMany([
-        {
-          title: "test",
-          body: "test",
-          isDone: false,
-          ageofUser: 8,
-        },
-        {
-          title: "test2",
-          body: "test2",
-          isDone: true,
-          ageofUser: 98,
-        },
-      ]);
-
+      await Note.collection.insertMany([testNote, testNote2]);
       const res = await request(server).get("/notes/all");
 
       expect(res.status).toBe(200);
@@ -42,14 +53,7 @@ describe("/notes", () => {
 
   describe("GET /:id", () => {
     it("should return a note with the given id", async () => {
-      const note = new Note({
-        title: "test",
-        body: "test",
-        isDone: false,
-        ageofUser: 8,
-      });
-      await note.save();
-
+      note = await new Note(testNote).save();
       const res = await request(server).get("/notes/" + note._id);
 
       expect(res.status).toBe(200);
@@ -65,8 +69,6 @@ describe("/notes", () => {
   });
 
   describe("POST /", () => {
-    let token;
-    let user;
     let title;
 
     const exec = () => {
@@ -79,12 +81,6 @@ describe("/notes", () => {
     };
 
     beforeEach(async () => {
-      user = await new User({
-        name: "test123",
-        email: "test@gmail.com",
-        password: 12345,
-      }).save();
-      token = user.generateAuthToken();
       title = "1234";
     });
 
@@ -126,10 +122,6 @@ describe("/notes", () => {
   });
 
   describe("PUT /update/:id", () => {
-    let token;
-    let user;
-    let note;
-
     const exec = () => {
       return request(server)
         .put("/notes/update/" + note._id)
@@ -138,19 +130,7 @@ describe("/notes", () => {
     };
 
     beforeEach(async () => {
-      user = await new User({
-        name: "test123",
-        email: "test@gmail.com",
-        password: 12345,
-        isAdmin: true,
-      }).save();
-      token = user.generateAuthToken();
-      note = await new Note({
-        title: "test",
-        body: "test",
-        isDone: false,
-        ageofUser: 8,
-      }).save();
+      note = await new Note(testNote).save();
     });
 
     it("should return 401 if no token is provided", async () => {
@@ -160,10 +140,11 @@ describe("/notes", () => {
     });
 
     it("should return 403 if user isn't an admin", async () => {
+      salt = await bcrypt.genSalt(10);
       user = await new User({
         name: "test123",
         email: "test@gmail.com",
-        password: 12345,
+        password: await bcrypt.hash("12345", salt),
       }).save();
       token = user.generateAuthToken();
 
@@ -181,12 +162,7 @@ describe("/notes", () => {
     });
 
     it("should return 404 given unsaved note id", async () => {
-      note = new Note({
-        title: "test",
-        body: "test",
-        isDone: false,
-        ageofUser: 8,
-      });
+      note = new Note(testNote2);
       const res = await exec();
       expect(res.status).toBe(404);
     });
@@ -199,8 +175,6 @@ describe("/notes", () => {
   });
 
   describe("DELETE /delete/:id", () => {
-    let token;
-    let user;
     let note;
 
     const exec = () => {
@@ -210,19 +184,7 @@ describe("/notes", () => {
     };
 
     beforeEach(async () => {
-      user = await new User({
-        name: "test123",
-        email: "test@gmail.com",
-        password: 12345,
-        isAdmin: true,
-      }).save();
-      token = user.generateAuthToken();
-      note = await new Note({
-        title: "test",
-        body: "test",
-        isDone: false,
-        ageofUser: 8,
-      }).save();
+      note = await new Note(testNote).save();
     });
 
     it("should return 401 if no token is provided", async () => {
@@ -232,10 +194,11 @@ describe("/notes", () => {
     });
 
     it("should return 403 if user isn't an admin", async () => {
+      salt = await bcrypt.genSalt(10);
       user = await new User({
         name: "test123",
         email: "test@gmail.com",
-        password: 12345,
+        password: await bcrypt.hash("12345", salt),
       }).save();
       token = user.generateAuthToken();
 
@@ -252,12 +215,7 @@ describe("/notes", () => {
     });
 
     it("should return 404 given unsaved note id", async () => {
-      note = new Note({
-        title: "test",
-        body: "test",
-        isDone: false,
-        ageofUser: 8,
-      });
+      note = new Note(testNote2);
       const res = await exec();
       expect(res.status).toBe(404);
     });
