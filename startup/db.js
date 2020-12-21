@@ -8,6 +8,7 @@ module.exports = () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
+      useCreateIndex: true,
     })
     .then(() => winston.info(`Connected to ${db}`));
 };

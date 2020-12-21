@@ -6,11 +6,11 @@ const bcrypt = require("bcrypt");
 const Joi = require("joi");
 
 const validate = (req) => {
-  const schema = {
+  const schema = Joi.object({
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
-  };
-  return Joi.validate(req, schema);
+  });
+  return schema.validate(req);
 };
 
 // this returns the token of a valid user

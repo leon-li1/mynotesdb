@@ -143,7 +143,7 @@ describe("/notes", () => {
       salt = await bcrypt.genSalt(10);
       user = await new User({
         name: "test123",
-        email: "test@gmail.com",
+        email: "test123@gmail.com",
         password: await bcrypt.hash("12345", salt),
       }).save();
       token = user.generateAuthToken();
@@ -197,7 +197,7 @@ describe("/notes", () => {
       salt = await bcrypt.genSalt(10);
       user = await new User({
         name: "test123",
-        email: "test@gmail.com",
+        email: "test123@gmail.com",
         password: await bcrypt.hash("12345", salt),
       }).save();
       token = user.generateAuthToken();

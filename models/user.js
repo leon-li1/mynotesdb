@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 5,
     maxlength: 255,
-    // unique: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -35,13 +35,13 @@ userSchema.methods.generateAuthToken = function () {
 const User = mongoose.model("User", userSchema);
 
 const validateUser = (user) => {
-  const schema = {
+  const schema = Joi.object({
     name: Joi.string().min(5).max(50).required(),
-    email: Joi.string().min(5).max(255).required().email(), //TODO: add uniqueness
+    email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(), // this is the actual password so it's max is 255
     isAdmin: Joi.boolean(),
-  };
-  return Joi.validate(user, schema);
+  });
+  return schema.validate(user);
 };
 
 exports.User = User;

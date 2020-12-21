@@ -25,13 +25,13 @@ const noteSchema = new mongoose.Schema({
 const Note = mongoose.model("Note", noteSchema);
 
 const validateSchema = (note) => {
-  const schema = {
+  const schema = Joi.object({
     title: Joi.string().min(4).max(100).required(),
     body: Joi.string(),
     isDone: Joi.boolean(),
     ageofUser: Joi.number().min(8).max(99),
-  };
-  return Joi.validate(note, schema);
+  });
+  return schema.validate(note);
 };
 
 exports.Note = Note;
