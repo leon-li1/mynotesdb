@@ -1,5 +1,5 @@
 const request = require("supertest");
-const { User } = require("../../../models/user");
+const { User } = require("../../../src/models/user");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
@@ -7,7 +7,7 @@ let server;
 
 describe("/api/auth", () => {
   beforeEach(() => {
-    server = require("../../../index");
+    server = require("../../../src/index");
   });
 
   afterEach(async () => {

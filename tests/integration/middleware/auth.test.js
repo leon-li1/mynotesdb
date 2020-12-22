@@ -1,6 +1,6 @@
 const request = require("supertest");
-const { User } = require("../../../models/user");
-const { Note } = require("../../../models/note");
+const { User } = require("../../../src/models/user");
+const { Note } = require("../../../src/models/note");
 const bcrypt = require("bcrypt");
 
 let server;
@@ -18,7 +18,7 @@ describe("auth middleware", () => {
   };
 
   beforeEach(async () => {
-    server = require("../../../index");
+    server = require("../../../src/index");
     salt = await bcrypt.genSalt(10);
     tempUser = {
       name: "test123",
